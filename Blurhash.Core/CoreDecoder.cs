@@ -25,21 +25,24 @@ namespace Blurhash.Core
         /// <param name="outputHeight">The desired height of the output in pixels</param>
         /// <param name="punch">A value that affects the contrast of the decoded image. 1 means normal, smaller values will make the effect more subtle, and larger values will make it stronger.</param>
         /// <returns>A 2-dimensional array of <see cref="Pixel"/>s </returns>
-        protected Pixel[,] CoreDecode(string blurhash, int outputWidth, int outputHeight, double punch = 1.0) {
-            if (blurhash.Length < 6) {
+        protected Pixel[,] CoreDecode(string blurhash, int outputWidth, int outputHeight, double punch = 1.0)
+        {
+            if (blurhash.Length < 6)
+            {
                 throw new ArgumentException("Blurhash value needs to be at least 6 characters", nameof(blurhash));
             }
 
-            var sizeFlag = (int) new[] {blurhash[0]}.DecodeBase83Integer();
+            var sizeFlag = (int)new[] { blurhash[0] }.DecodeBase83Integer();
 
             var componentsY = sizeFlag / 9 + 1;
             var componentsX = sizeFlag % 9 + 1;
 
-            if (blurhash.Length != 4 + 2 * componentsX * componentsY) {
+            if (blurhash.Length != 4 + 2 * componentsX * componentsY)
+            {
                 throw new ArgumentException("Blurhash value is missing data", nameof(blurhash));
             }
 
-            var quantizedMaximumValue = (double) new[] {blurhash[1]}.DecodeBase83Integer();
+            var quantizedMaximumValue = (double)new[] { blurhash[1] }.DecodeBase83Integer();
             var maximumValue = (quantizedMaximumValue + 1.0) / 166.0;
 
             var coefficients = new Pixel[componentsX, componentsY];
@@ -75,24 +78,18 @@ namespace Blurhash.Core
                 .SelectMany(x => Enumerable.Range(0, outputHeight).Select(y => new Coordinate(x, y)))
                 .ToArray();
 
-            var locker = new object();
-            Parallel.ForEach(coordinates,
-                (coordinate) =>
-                {
-                    pixels[coordinate.X, coordinate.Y] = DecodePixel(componentsY, componentsX, coordinate.X, coordinate.Y, outputWidth, outputHeight, coefficients);
+            foreach (var coordinate in coordinates)
+            {
+                pixels[coordinate.X, coordinate.Y] = DecodePixel(componentsY, componentsX, coordinate.X, coordinate.Y, outputWidth, outputHeight, coefficients);
 
-                    lock (locker)
-                    {
-                        ProgressCallback?.Invoke((double) currentPixel / pixelCount);
-                        currentPixel++;
-                    }
-                });
- 
+                ProgressCallback?.Invoke((double)currentPixel / pixelCount);
+                currentPixel++;
+            }
             return pixels;
         }
 
         private Pixel DecodePixel(
-            int componentsY, int componentsX, 
+            int componentsY, int componentsX,
             int x, int y,
             int width, int height,
             Pixel[,] coefficients)
@@ -125,13 +122,14 @@ namespace Blurhash.Core
             return new Pixel(MathUtils.SRgbToLinear(intR), MathUtils.SRgbToLinear(intG), MathUtils.SRgbToLinear(intB));
         }
 
-        private static Pixel DecodeAc(BigInteger value, double maximumValue) {
-            var quantizedR = (double) (value / (19 * 19));
-            var quantizedG = (double) ((value / 19) % 19);
-            var quantizedB = (double) (value % 19);
+        private static Pixel DecodeAc(BigInteger value, double maximumValue)
+        {
+            var quantizedR = (double)(value / (19 * 19));
+            var quantizedG = (double)((value / 19) % 19);
+            var quantizedB = (double)(value % 19);
 
             var result = new Pixel(
-                MathUtils.SignPow((quantizedR - 9.0) / 9.0, 2.0) * maximumValue, 
+                MathUtils.SignPow((quantizedR - 9.0) / 9.0, 2.0) * maximumValue,
                 MathUtils.SignPow((quantizedG - 9.0) / 9.0, 2.0) * maximumValue,
                 MathUtils.SignPow((quantizedB - 9.0) / 9.0, 2.0) * maximumValue
                 );

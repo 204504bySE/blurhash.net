@@ -46,7 +46,7 @@ namespace System.Drawing.Common.Blurhash
                 var ptr = bmpData.Scan0;
 
                 // Declare an array to hold the bytes of the bitmap.
-                var bytes  = Math.Abs(bmpData.Stride) * height;
+                var bytes = Math.Abs(bmpData.Stride) * height;
                 var rgbValues = new byte[bytes];
 
                 // Copy the RGB values into the array.
@@ -54,7 +54,7 @@ namespace System.Drawing.Common.Blurhash
 
                 var result = new Pixel[width, height];
 
-                Parallel.ForEach(Enumerable.Range(0, height), y =>
+                for (int y = 0; y < height; y++)
                 {
                     var index = bmpData.Stride * y;
 
@@ -65,7 +65,7 @@ namespace System.Drawing.Common.Blurhash
                         result[x, y].Blue = MathUtils.SRgbToLinear(rgbValues[index]);
                         index += 3;
                     }
-                });
+                }
 
                 temporaryBitmap.UnlockBits(bmpData);
 

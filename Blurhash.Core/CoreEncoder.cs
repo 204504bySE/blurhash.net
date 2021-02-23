@@ -12,12 +12,6 @@ namespace Blurhash.Core
     public class CoreEncoder
     {
         /// <summary>
-        /// A callback to be called when the progress of the operation changes.
-        /// It receives a value between 0.0 and 1.0 that indicates the progress.
-        /// </summary>
-        public Action<double> ProgressCallback { get; set; }
-
-        /// <summary>
         /// Encodes a 2-dimensional array of pixels into a Blurhash string
         /// </summary>
         /// <param name="pixels">The 2-dimensional array of pixels to encode</param>
@@ -41,20 +35,11 @@ namespace Blurhash.Core
             var factorCount = componentsX * componentsY;
             var factorIndex = 0;
 
-            var locker = new object();
-
-            // Parallel
-            Parallel.ForEach(components,
-                (coordinate) =>
-                {
-                    factors[coordinate.X, coordinate.Y] = MultiplyBasisFunction(coordinate.X, coordinate.Y, pixels);
-
-                    lock (locker)
-                    {
-                        ProgressCallback?.Invoke((double) factorIndex / factorCount);
-                        factorIndex++;
-                    }
-                });
+            foreach (var coordinate in components)
+            { 
+                factors[coordinate.X, coordinate.Y] = MultiplyBasisFunction(coordinate.X, coordinate.Y, pixels);
+                factorIndex++;
+            }
 
             var dc = factors[0, 0];
             var acCount = componentsX * componentsY - 1;
