@@ -13,6 +13,9 @@ namespace Blurhash.ImageSharp
 {
     public class Encoder : CoreEncoder 
     {
+        public Encoder(int width, int height, int maxComponentsX, int maxComponentsY) : base(width, height, maxComponentsX, maxComponentsY)
+        { }
+
         /// <summary>
         /// Encodes a picture into a Blurhash string
         /// </summary>
@@ -41,7 +44,7 @@ namespace Blurhash.ImageSharp
         /// Converts the given bitmap to the library-independent representation used within the Blurhash-core
         /// </summary>
         /// <param name="sourceBitmap">The bitmap to encode</param>
-        internal static Pixel[,] ConvertBitmap<T>(Image<T> sourceBitmap) where T : struct, IPixel<T>
+        internal static PixelVector ConvertBitmap<T>(Image<T> sourceBitmap) where T : struct, IPixel<T>
         {
             if (typeof(T) != typeof(Rgba32) && typeof(T) != typeof(Rgb24))
                 throw new ArgumentOutOfRangeException(nameof(sourceBitmap), "Only Rgba32 and Rgb24 are supported");
@@ -51,20 +54,17 @@ namespace Blurhash.ImageSharp
             var bytesPerPixel = sourceBitmap.PixelType.BitsPerPixel / 8;
             var stride = width * 3;
 
-            var result = new Pixel[width, height];
+            var result = new PixelVector(width, height);
             
             for (int y = 0; y < height; y++)
             {
                 var rgbValues = MemoryMarshal.AsBytes(sourceBitmap.GetPixelRowSpan(y));
 
                 var index = stride;
-
-                for (var x = 0; x < width; x++)
+                var pixelsY = result.Pixels[y];
+                for (var i = 0; i < width * 3; i++)
                 {
-                    result[x, y].Red = MathUtils.SRgbToLinear(rgbValues[index]);
-                    result[x, y].Green = MathUtils.SRgbToLinear(rgbValues[index + 1]);
-                    result[x, y].Blue = MathUtils.SRgbToLinear(rgbValues[index + 2]);
-                    index += bytesPerPixel;
+                    pixelsY[i] = rgbValues[i];
                 }
             }
 

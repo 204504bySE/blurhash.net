@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,19 +13,80 @@ namespace Blurhash.Core
     /// </summary>
     public class CoreEncoder
     {
+        readonly int Width, Height;
+        readonly int MaxComponentsX, MaxComponentsY;
+
         /// <summary>
-        /// Encodes a 2-dimensional array of pixels into a Blurhash string
+        // Basis X array.
+        // [ComponentX][x*3+(r:0 g:1 b:2)]
+        // for RGB packed array.
+        // and has some extra elements to fit into Vector\<float\>
         /// </summary>
-        /// <param name="pixels">The 2-dimensional array of pixels to encode</param>
-        /// <param name="componentsX">The number of components used on the X-Axis for the DCT</param>
-        /// <param name="componentsY">The number of components used on the Y-Axis for the DCT</param>
+        readonly Vector<float>[][] BasisX;
+        /// <summary>
+        /// Basis Y array.
+        /// [ComponentY][y]
+        /// </summary>
+        readonly float[][] BasisY;
+        public CoreEncoder(int width, int height, int maxComponentsX, int maxComponentsY)
+        {
+            if (maxComponentsX < 1) throw new ArgumentException("maxComponentsX needs to be at least 1");
+            if (maxComponentsX > 9) throw new ArgumentException("maxComponentsX needs to be at most 9");
+            if (maxComponentsY < 1) throw new ArgumentException("maxComponentsY needs to be at least 1");
+            if (maxComponentsY > 9) throw new ArgumentException("maxComponentsY needs to be at most 9");
+
+            MaxComponentsX = maxComponentsX;
+            MaxComponentsY = maxComponentsY;
+            Width = width;
+            Height = height;
+
+            //Calculate X|Y basis
+            //Original Basis is...
+            //MathF.Cos(MathF.PI * xComponent * x / width) * MathF.Cos(MathF.PI * yComponent * y / height)
+
+            BasisX = new Vector<float>[maxComponentsX][];
+            int basisXVectorLength = (width * 3 + Vector<float>.Count - 1) / Vector<float>.Count;
+            for (int c = 0; c < maxComponentsX; c++)
+            {   var basisArray = new float[basisXVectorLength * Vector<float>.Count];
+                for (int x = 0; x < width; x++)
+                {
+                    float basis = MathF.Cos(MathF.PI * c * x / Width);
+                    basisArray[3 * x] = basis;
+                    basisArray[3 * x + 1] = basis;
+                    basisArray[3 * x + 2] = basis;
+                }
+
+                var basisVector = new Vector<float>[basisXVectorLength];
+                BasisX[c] = basisVector;
+                for(int i = 0; i < basisVector.Length; i++)
+                {
+                    basisVector[i] = new Vector<float>(basisArray, i * Vector<float>.Count);
+                }
+            }
+
+            BasisY = new float[maxComponentsY][];
+            for (int c = 0; c < maxComponentsY; c++)
+            {
+                var basisArray = new float[height];
+                BasisY[c] = basisArray;
+                for (int y = 0; y < basisArray.Length; y++)
+                {
+                    basisArray[y] = MathF.Cos(MathF.PI * c * y / height);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Encodes a PixelVector into a Blurhash string
+        /// </summary>
         /// <returns>The resulting Blurhash string</returns>
-        protected string CoreEncode(Pixel[,] pixels, int componentsX, int componentsY)
+        protected string CoreEncode(PixelVector pixels, int componentsX, int componentsY)
         {
             if (componentsX < 1) throw new ArgumentException("componentsX needs to be at least 1");
-            if (componentsX > 9) throw new ArgumentException("componentsX needs to be at most 9");
             if (componentsY < 1) throw new ArgumentException("componentsY needs to be at least 1");
-            if (componentsY > 9) throw new ArgumentException("componentsY needs to be at most 9");
+            if (componentsX > MaxComponentsX) throw new ArgumentException("componentsX needs to be not more than MaxComponentsX");
+            if (componentsY > MaxComponentsY) throw new ArgumentException("componentsY needs to be not more than MaxComponentsY");
+            if (Width != pixels.Width || Height != pixels.Height) { throw new ArgumentException("Width/Height mismatch"); }
 
             var factors = new Pixel[componentsX, componentsY];
 
@@ -90,22 +153,38 @@ namespace Blurhash.Core
             return resultBuilder.ToString();
         }
 
-        private static Pixel MultiplyBasisFunction(int xComponent, int yComponent, Pixel[,] pixels)
+        private Pixel MultiplyBasisFunction(int xComponent, int yComponent, PixelVector pixels)
         {
-            float  r = 0, g = 0, b = 0;
-            float  normalization = (xComponent == 0 && yComponent == 0) ? 1 : 2;
+            var componentBasisX = BasisX[xComponent];
+            var componentBasisY = BasisY[yComponent];
 
-            var width = pixels.GetLength(0);
-            var height = pixels.GetLength(1);
+            Span<float> sumArray = stackalloc float[pixels.XCount];
+            sumArray.Fill(0);
+            var sumVec = MemoryMarshal.Cast<float, Vector<float>>(sumArray);
 
-            for(var y = 0; y < height; y++)
+            var width = pixels.Width;
+            var height = pixels.Height;
+
+            //calc DCT and sum results vertically
+            for (var y = 0; y < height; y++)
             {
-                for(var x = 0; x < width; x++) {
-                    var basis = MathF.Cos(MathF.PI * xComponent * x / width) * MathF.Cos(MathF.PI * yComponent * y / height);
-                    r += basis * pixels[x,y].Red;
-                    g += basis * pixels[x,y].Green;
-                    b += basis * pixels[x,y].Blue;
+                var currentBasisY = componentBasisY[y];
+                var vec = pixels.VectorSpan(y);
+                for(int x = 0; x < vec.Length; x++)
+                {
+                    sumVec[x] += vec[x] * componentBasisX[x] * currentBasisY;
                 }
+            }
+
+            float r = 0, g = 0, b = 0;
+            float normalization = (xComponent == 0 && yComponent == 0) ? 1 : 2;
+
+            //then sum horizontally
+            for (int i = 0; i < width * 3; i += 3)
+            {
+                r += sumArray[i];
+                g += sumArray[i + 1];
+                b += sumArray[i + 2];
             }
 
             var scale = normalization / (width * height);

@@ -11,6 +11,8 @@ namespace System.Drawing.Common.Blurhash
     /// </summary>
     public class Encoder : CoreEncoder
     {
+        public Encoder(int width, int height, int maxComponentsX, int maxComponentsY) : base(width, height, maxComponentsX, maxComponentsY) { }
+
         /// <summary>
         /// Encodes a picture into a Blurhash string
         /// </summary>
@@ -27,7 +29,7 @@ namespace System.Drawing.Common.Blurhash
         /// Converts the given bitmap to the library-independent representation used within the Blurhash-core
         /// </summary>
         /// <param name="sourceBitmap">The bitmap to encode</param>
-        public static Pixel[,] ConvertBitmap(Bitmap sourceBitmap)
+        public static PixelVector ConvertBitmap(Bitmap sourceBitmap)
         {
             var width = sourceBitmap.Width;
             var height = sourceBitmap.Height;
@@ -52,23 +54,20 @@ namespace System.Drawing.Common.Blurhash
                 // Copy the RGB values into the array.
                 Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
 
-                var result = new Pixel[width, height];
+                var result = new PixelVector(width, height);
 
                 for (int y = 0; y < height; y++)
                 {
-                    var index = bmpData.Stride * y;
-
-                    for (var x = 0; x < width; x++)
+                    var baseIndex = bmpData.Stride * y;
+                    var pixelsY = result.Pixels[y];
+                    for (var i = 0; i < width * 3; i++)
                     {
-                        result[x, y].Red = MathUtils.SRgbToLinear(rgbValues[index + 2]);
-                        result[x, y].Green = MathUtils.SRgbToLinear(rgbValues[index + 1]);
-                        result[x, y].Blue = MathUtils.SRgbToLinear(rgbValues[index]);
-                        index += 3;
+                        pixelsY[i] = rgbValues[i + baseIndex];
                     }
                 }
-
                 temporaryBitmap.UnlockBits(bmpData);
 
+                //result.ChangeFromSrgbToLinear();
                 return result;
             }
         }

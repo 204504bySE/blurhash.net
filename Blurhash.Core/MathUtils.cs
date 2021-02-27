@@ -22,7 +22,7 @@ namespace Blurhash.Core
         /// </summary>
         public static float SRgbToLinear(int value) {
             float v = value / 255f;
-            if(v <= 0.04045) return v / 12.92f;
+            if(v <= 0.04045f) return v / 12.92f;
             else return MathF.Pow((v + 0.055f) / 1.055f, 2.4f);
         }
 
