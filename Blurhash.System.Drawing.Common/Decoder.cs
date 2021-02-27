@@ -18,7 +18,7 @@ namespace System.Drawing.Common.Blurhash
         /// <param name="outputHeight">The desired height of the output in pixels</param>
         /// <param name="punch">A value that affects the contrast of the decoded image. 1 means normal, smaller values will make the effect more subtle, and larger values will make it stronger.</param>
         /// <returns>The decoded preview</returns>
-        public Image Decode(string blurhash, int outputWidth, int outputHeight, double punch = 1.0)
+        public Image Decode(string blurhash, int outputWidth, int outputHeight, float punch = 1f)
         {
             var pixelData = base.CoreDecode(blurhash, outputWidth, outputHeight, punch);
             return ConvertToBitmap(pixelData);

@@ -25,7 +25,7 @@ namespace Blurhash.Core
         /// <param name="outputHeight">The desired height of the output in pixels</param>
         /// <param name="punch">A value that affects the contrast of the decoded image. 1 means normal, smaller values will make the effect more subtle, and larger values will make it stronger.</param>
         /// <returns>A 2-dimensional array of <see cref="Pixel"/>s </returns>
-        protected Pixel[,] CoreDecode(string blurhash, int outputWidth, int outputHeight, double punch = 1.0)
+        protected Pixel[,] CoreDecode(string blurhash, int outputWidth, int outputHeight, float punch = 1f)
         {
             if (blurhash.Length < 6)
             {
@@ -42,8 +42,8 @@ namespace Blurhash.Core
                 throw new ArgumentException("Blurhash value is missing data", nameof(blurhash));
             }
 
-            var quantizedMaximumValue = (double)new[] { blurhash[1] }.DecodeBase83Integer();
-            var maximumValue = (quantizedMaximumValue + 1.0) / 166.0;
+            var quantizedMaximumValue = (float)new[] { blurhash[1] }.DecodeBase83Integer();
+            var maximumValue = (quantizedMaximumValue + 1f) / 166f;
 
             var coefficients = new Pixel[componentsX, componentsY];
             {
@@ -94,15 +94,15 @@ namespace Blurhash.Core
             int width, int height,
             Pixel[,] coefficients)
         {
-            var r = 0.0;
-            var g = 0.0;
-            var b = 0.0;
+            var r = 0f;
+            var g = 0f;
+            var b = 0f;
 
             for (var j = 0; j < componentsY; j++)
             {
                 for (var i = 0; i < componentsX; i++)
                 {
-                    var basis = Math.Cos((Math.PI * x * i) / width) * Math.Cos((Math.PI * y * j) / height);
+                    var basis = MathF.Cos((MathF.PI * x * i) / width) * MathF.Cos((MathF.PI * y * j) / height);
                     var coefficient = coefficients[i, j];
                     r += coefficient.Red * basis;
                     g += coefficient.Green * basis;
@@ -122,16 +122,16 @@ namespace Blurhash.Core
             return new Pixel(MathUtils.SRgbToLinear(intR), MathUtils.SRgbToLinear(intG), MathUtils.SRgbToLinear(intB));
         }
 
-        private static Pixel DecodeAc(BigInteger value, double maximumValue)
+        private static Pixel DecodeAc(BigInteger value, float maximumValue)
         {
-            var quantizedR = (double)(value / (19 * 19));
-            var quantizedG = (double)((value / 19) % 19);
-            var quantizedB = (double)(value % 19);
+            var quantizedR = (float)(value / (19 * 19));
+            var quantizedG = (float)((value / 19) % 19);
+            var quantizedB = (float)(value % 19);
 
             var result = new Pixel(
-                MathUtils.SignPow((quantizedR - 9.0) / 9.0, 2.0) * maximumValue,
-                MathUtils.SignPow((quantizedG - 9.0) / 9.0, 2.0) * maximumValue,
-                MathUtils.SignPow((quantizedB - 9.0) / 9.0, 2.0) * maximumValue
+                MathUtils.SignPow((quantizedR - 9f) / 9f, 2f) * maximumValue,
+                MathUtils.SignPow((quantizedG - 9f) / 9f, 2f) * maximumValue,
+                MathUtils.SignPow((quantizedB - 9f) / 9f, 2f) * maximumValue
                 );
 
             return result;

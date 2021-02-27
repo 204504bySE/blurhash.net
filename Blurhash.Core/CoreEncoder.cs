@@ -92,8 +92,8 @@ namespace Blurhash.Core
 
         private static Pixel MultiplyBasisFunction(int xComponent, int yComponent, Pixel[,] pixels)
         {
-            double r = 0, g = 0, b = 0;
-            double normalization = (xComponent == 0 && yComponent == 0) ? 1 : 2;
+            float  r = 0, g = 0, b = 0;
+            float  normalization = (xComponent == 0 && yComponent == 0) ? 1 : 2;
 
             var width = pixels.GetLength(0);
             var height = pixels.GetLength(1);
@@ -101,7 +101,7 @@ namespace Blurhash.Core
             for(var y = 0; y < height; y++)
             {
                 for(var x = 0; x < width; x++) {
-                    var basis = Math.Cos(Math.PI * xComponent * x / width) * Math.Cos(Math.PI * yComponent * y / height);
+                    var basis = MathF.Cos(MathF.PI * xComponent * x / width) * MathF.Cos(MathF.PI * yComponent * y / height);
                     r += basis * pixels[x,y].Red;
                     g += basis * pixels[x,y].Green;
                     b += basis * pixels[x,y].Blue;
@@ -112,15 +112,15 @@ namespace Blurhash.Core
             return new Pixel(r * scale, g * scale, b * scale);
         }
 
-        private static int EncodeAc(double r, double g, double b, double maximumValue) {
-            var quantizedR = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(r / maximumValue, 0.5) * 9 + 9.5)));
-            var quantizedG = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(g / maximumValue, 0.5) * 9 + 9.5)));
-            var quanzizedB = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(b / maximumValue, 0.5) * 9 + 9.5)));
+        private static int EncodeAc(float  r, float  g, float  b, float  maximumValue) {
+            var quantizedR = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(r / maximumValue, 0.5f) * 9 + 9.5f)));
+            var quantizedG = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(g / maximumValue, 0.5f) * 9 + 9.5f)));
+            var quanzizedB = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(b / maximumValue, 0.5f) * 9 + 9.5f)));
 
             return quantizedR * 19 * 19 + quantizedG * 19 + quanzizedB;
         }
 
-        private static int EncodeDc(double r, double g, double b) {
+        private static int EncodeDc(float r, float  g, float  b) {
             var roundedR = MathUtils.LinearTosRgb(r);
             var roundedG = MathUtils.LinearTosRgb(g);
             var roundedB = MathUtils.LinearTosRgb(b);
