@@ -12,10 +12,10 @@ namespace Blurhash.Core
         public int Height { get; }
         /// <summary>
         /// 1st index: Y
-        /// 2nd index: X and RGB
-        /// R: [3 * x]
+        /// 2nd index: X and RGB (BGR order because of little endian)
+        /// B: [3 * x]
         /// G: [3 * x + 1]
-        /// B: [3 * x + 2]
+        /// R: [3 * x + 2]
         /// and some extra elements to fit into Vector\<float\> 
         /// </summary>
         public readonly float[][] Pixels;
@@ -51,24 +51,27 @@ namespace Blurhash.Core
 
         public void ChangeFromSrgbToLinear()
         {
-            const float darkLinear = (float)(1 / 12.92);
-
+            const float darkLinear = (float)(1.0 / 255 / 12.92);
+            const float darkThresholdValue = (float)(0.04045 * 255);
+            var darkThreshold = new Vector<float>(darkThresholdValue);
             Span<float> brightFloat = stackalloc float[Vector<float>.Count];
+            var bright = MemoryMarshal.Cast<float, Vector<float>>(brightFloat);
 
             for (int y = 0; y < Pixels.Length; y++)
             {
                 var vec = VectorSpan(y);
                 for (int i = 0; i < vec.Length; i++)
                 {
-                    var veciNormalized = vec[i] * (1 / 255);
-                    var dark = veciNormalized * darkLinear;
+                    var veci = vec[i];
+                    var darkSelect = Vector.LessThanOrEqual(veci, darkThreshold);
+                    var dark = veci * darkLinear;
+                    bright[0] = veci * (1f / 255f);
                     for (int j = 0; j < brightFloat.Length; j++)
                     {
-                        brightFloat[j] = MathF.Pow((veciNormalized[j] + 0.055f) * (1 / 1.055f), 2.4f);
+                        brightFloat[j] = MathF.Pow((brightFloat[j] + 0.055f) * (1 / 1.055f), 2.4f);
                     }
 
-                    var bright = MemoryMarshal.Cast<float, Vector<float>>(brightFloat);
-                    vec[i] = Vector.Max(dark, bright[0]);
+                    vec[i] = Vector.ConditionalSelect(darkSelect ,dark, bright[0]);
                 }
             }
         }
@@ -81,9 +84,9 @@ namespace Blurhash.Core
                 var pixelsY = Pixels[y];
                 for(int x = 0; x < Width; x++)
                 {
-                    ret[x, y].Red = pixelsY[x * 3];
+                    ret[x, y].Blue = pixelsY[x * 3];
                     ret[x, y].Green = pixelsY[x * 3 + 1];
-                    ret[x, y].Blue = pixelsY[x * 3 + 2];
+                    ret[x, y].Red = pixelsY[x * 3 + 2];
                 }
             }
             return ret;

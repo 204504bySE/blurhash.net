@@ -21,13 +21,14 @@ namespace System.Drawing.Common.Blurhash
             Console.WriteLine();
         }
 
+        [TestMethod]
         public void EncodeBenchmark()
         {
             var image = Image.FromFile("1233360707896238080.jpg");
             var encoder = new Encoder(150, 150, 9, 9);
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 encoder.Encode(image, 9, 9);
             }

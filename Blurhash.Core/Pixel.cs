@@ -5,15 +5,15 @@
     /// </summary>
     public struct Pixel
     {
-        public float Red;
-        public float Green;
         public float Blue;
+        public float Green;
+        public float Red;
 
         public Pixel(float red, float green, float blue)
         {
-            this.Red = red;
-            this.Green = green;
             this.Blue = blue;
+            this.Green = green;
+            this.Red = red;
         }
     }
 }

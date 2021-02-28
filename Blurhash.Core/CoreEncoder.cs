@@ -176,15 +176,15 @@ namespace Blurhash.Core
                 }
             }
 
-            float r = 0, g = 0, b = 0;
+            float b = 0, g = 0, r = 0;
             float normalization = (xComponent == 0 && yComponent == 0) ? 1 : 2;
 
             //then sum horizontally
             for (int i = 0; i < width * 3; i += 3)
             {
-                r += sumArray[i];
+                b += sumArray[i];
                 g += sumArray[i + 1];
-                b += sumArray[i + 2];
+                r += sumArray[i + 2];
             }
 
             var scale = normalization / (width * height);

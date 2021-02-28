@@ -67,7 +67,7 @@ namespace System.Drawing.Common.Blurhash
                 }
                 temporaryBitmap.UnlockBits(bmpData);
 
-                //result.ChangeFromSrgbToLinear();
+                result.ChangeFromSrgbToLinear();
                 return result;
             }
         }
