@@ -60,7 +60,6 @@ namespace Blurhash.ImageSharp
             {
                 var rgbValues = MemoryMarshal.AsBytes(sourceBitmap.GetPixelRowSpan(y));
 
-                var index = stride;
                 var pixelsY = result.Pixels[y];
                 for (var i = 0; i < width * 3; i++)
                 {

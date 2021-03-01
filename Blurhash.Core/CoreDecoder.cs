@@ -75,8 +75,7 @@ namespace Blurhash.Core
             var currentPixel = 0;
 
             var coordinates = Enumerable.Range(0, outputWidth)
-                .SelectMany(x => Enumerable.Range(0, outputHeight).Select(y => new Coordinate(x, y)))
-                .ToArray();
+                .SelectMany(x => Enumerable.Range(0, outputHeight).Select(y => new Coordinate(x, y)));
 
             foreach (var coordinate in coordinates)
             {

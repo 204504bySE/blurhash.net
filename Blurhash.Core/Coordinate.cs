@@ -3,10 +3,10 @@
     /// <summary>
     /// Represents a 2D-coordinate 
     /// </summary>
-    public class Coordinate
+    public readonly struct Coordinate
     {
-        public int X;
-        public int Y;
+        public int X { get; }
+        public int Y { get; }
 
         public Coordinate(int x, int y)
         {

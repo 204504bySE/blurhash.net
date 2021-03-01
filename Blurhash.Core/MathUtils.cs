@@ -31,7 +31,7 @@ namespace Blurhash.Core
         /// </summary>
         public static int LinearTosRgb(float value) {
             float v = Math.Max(0f, Math.Min(1f, value));
-            if(v <= 0.0031308) return (int)(v * 12.92 * 255f + 0.5);
+            if(v <= 0.0031308f) return (int)(v * (12.92f * 255f) + 0.5);
             else return (int)((1.055 * Math.Pow(v, 1f / 2.4f) - 0.055f) * 255f + 0.5f);
         }
     }

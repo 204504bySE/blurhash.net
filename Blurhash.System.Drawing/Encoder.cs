@@ -32,14 +32,16 @@ namespace System.Drawing.Blurhash
         {
             var width = sourceBitmap.Width;
             var height = sourceBitmap.Height;
+            PixelVector result;
 
+            int stride;
+            byte[] rgbValues;
             using (var temporaryBitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb))
             {
                 using (var graphics = Graphics.FromImage(temporaryBitmap))
                 {
                     graphics.DrawImageUnscaled(sourceBitmap, 0, 0);
                 }
-
                 // Lock the bitmap's bits.
                 var bmpData = temporaryBitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, temporaryBitmap.PixelFormat);
 
@@ -48,27 +50,27 @@ namespace System.Drawing.Blurhash
 
                 // Declare an array to hold the bytes of the bitmap.
                 var bytes = Math.Abs(bmpData.Stride) * height;
-                var rgbValues = new byte[bytes];
+                stride = bmpData.Stride;
+                rgbValues = new byte[bytes];
 
                 // Copy the RGB values into the array.
                 Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
-
-                var result = new PixelVector(width, height);
-
-                for (int y = 0; y < height; y++)
-                {
-                    var baseIndex = bmpData.Stride * y;
-                    var pixelsY = result.Pixels[y];
-                    for (var i = 0; i < width * 3; i++)
-                    {
-                        pixelsY[i] = rgbValues[i + baseIndex];
-                    }
-                }
                 temporaryBitmap.UnlockBits(bmpData);
-
-                result.ChangeFromSrgbToLinear();
-                return result;
             }
+
+            result = new PixelVector(width, height);
+
+            for (int y = 0; y < height; y++)
+            {
+                var baseIndex = 0 <= stride ? stride * y : -stride * (height - y);
+                var pixelsY = result.Pixels[y];
+                for (var i = 0; i < width * 3; i++)
+                {
+                    pixelsY[i] = rgbValues[i + baseIndex];
+                }
+            }
+            result.ChangeFromSrgbToLinear();
+            return result;
         }
     }
 }

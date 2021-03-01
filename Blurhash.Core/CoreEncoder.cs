@@ -90,18 +90,12 @@ namespace Blurhash.Core
 
             var factors = new Pixel[componentsX, componentsY];
 
-            var components = Enumerable
-                .Range(0, componentsX)
-                .SelectMany(i => Enumerable.Range(0, componentsY).Select(j => new Coordinate(i, j)))
-                .ToArray(); // Create tuples (i,j) for all components
-
-            var factorCount = componentsX * componentsY;
-            var factorIndex = 0;
-
-            foreach (var coordinate in components)
-            { 
-                factors[coordinate.X, coordinate.Y] = MultiplyBasisFunction(coordinate.X, coordinate.Y, pixels);
-                factorIndex++;
+            for(int y = 0; y < componentsY; y++)
+            {
+                for(int x = 0; x < componentsX; x++)
+                {
+                    factors[x, y] = MultiplyBasisFunction(x, y, pixels);
+                }
             }
 
             var dc = factors[0, 0];
@@ -158,9 +152,9 @@ namespace Blurhash.Core
             var componentBasisX = BasisX[xComponent];
             var componentBasisY = BasisY[yComponent];
 
-            Span<float> sumArray = stackalloc float[pixels.XCount];
-            sumArray.Fill(0);
-            var sumVec = MemoryMarshal.Cast<float, Vector<float>>(sumArray);
+            Span<Vector<float>> sumVec =  stackalloc Vector<float>[pixels.SpanLength];
+            sumVec.Fill(Vector<float>.Zero);
+            var sumArray = MemoryMarshal.Cast<Vector<float>, float>(sumVec);
 
             var width = pixels.Width;
             var height = pixels.Height;
@@ -196,14 +190,14 @@ namespace Blurhash.Core
             var quantizedG = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(g / maximumValue, 0.5f) * 9 + 9.5f)));
             var quanzizedB = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(b / maximumValue, 0.5f) * 9 + 9.5f)));
 
-            return quantizedR * 19 * 19 + quantizedG * 19 + quanzizedB;
+            return quantizedR * (19 * 19) + quantizedG * 19 + quanzizedB;
         }
 
         private static int EncodeDc(float r, float  g, float  b) {
             var roundedR = MathUtils.LinearTosRgb(r);
             var roundedG = MathUtils.LinearTosRgb(g);
             var roundedB = MathUtils.LinearTosRgb(b);
-            return (roundedR << 16) + (roundedG << 8) + roundedB;
+            return (roundedR << 16) | (roundedG << 8) | roundedB;
         }
     }
 }
