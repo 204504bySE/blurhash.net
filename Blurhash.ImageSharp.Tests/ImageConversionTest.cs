@@ -1,6 +1,8 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Blurhash.ImageSharp;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using FluentAssertions;
 
 namespace Blurhash.ImageSharp.Tests
 {
@@ -13,12 +15,12 @@ namespace Blurhash.ImageSharp.Tests
             var rnd = new Random();
 
 
-            var sourceImage = new Bitmap(20, 20, PixelFormat.Format24bppRgb);
+            var sourceImage = new Image<Rgb24>(20, 20);
 
             for (var x = 0; x < 20; x++)
                 for (var y = 0; y < 20; y++)
                 {
-                    sourceImage.SetPixel(x, y, Color.FromArgb(rnd.Next(0, 2) * 255, rnd.Next(0, 2) * 255, rnd.Next(0, 2) * 255));
+                    sourceImage[x,y] = new Rgb24((byte)(rnd.Next(0, 2) * 255), (byte)(rnd.Next(0, 2) * 255), (byte)(rnd.Next(0, 2) * 255));
                 }
 
             var sourceData = Encoder.ConvertBitmap(sourceImage);
@@ -26,7 +28,7 @@ namespace Blurhash.ImageSharp.Tests
             for (var x = 0; x < 20; x++)
                 for (var y = 0; y < 20; y++)
                 {
-                    var pixel = sourceImage.GetPixel(x, y);
+                    var pixel = sourceImage[x, y];
 
                     sourceData[x, y].Red.Should().BeApproximately(pixel.R == 0 ? 0.0 : 1.0, double.Epsilon);
                     sourceData[x, y].Green.Should().BeApproximately(pixel.G == 0 ? 0.0 : 1.0, double.Epsilon);
@@ -38,41 +40,7 @@ namespace Blurhash.ImageSharp.Tests
             for (var x = 0; x < 20; x++)
                 for (var y = 0; y < 20; y++)
                 {
-                    targetImage.GetPixel(x, y).Should().Be(sourceImage.GetPixel(x, y));
-                }
-        }
-
-        [TestMethod]
-        public void TestConversion32BppRgb()
-        {
-            var rnd = new Random();
-
-            var sourceImage = new Bitmap(20, 20, PixelFormat.Format32bppRgb);
-
-            for (var x = 0; x < 20; x++)
-                for (var y = 0; y < 20; y++)
-                {
-                    sourceImage.SetPixel(x, y, Color.FromArgb(rnd.Next(0, 2) * 255, rnd.Next(0, 2) * 255, rnd.Next(0, 2) * 255));
-                }
-
-            var sourceData = Encoder.ConvertBitmap(sourceImage);
-
-            for (var x = 0; x < 20; x++)
-                for (var y = 0; y < 20; y++)
-                {
-                    var pixel = sourceImage.GetPixel(x, y);
-
-                    sourceData[x, y].Red.Should().BeApproximately(pixel.R == 0 ? 0.0 : 1.0, double.Epsilon);
-                    sourceData[x, y].Green.Should().BeApproximately(pixel.G == 0 ? 0.0 : 1.0, double.Epsilon);
-                    sourceData[x, y].Blue.Should().BeApproximately(pixel.B == 0 ? 0.0 : 1.0, double.Epsilon);
-                }
-
-            var targetImage = Decoder.ConvertToBitmap(sourceData);
-
-            for (var x = 0; x < 20; x++)
-                for (var y = 0; y < 20; y++)
-                {
-                    targetImage.GetPixel(x, y).Should().Be(sourceImage.GetPixel(x, y));
+                    targetImage[x, y].Should().Be(sourceImage[x, y]);
                 }
         }
     }

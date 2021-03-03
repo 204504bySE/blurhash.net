@@ -29,7 +29,7 @@ namespace Blurhash.ImageSharp
         /// Converts the given bitmap to the library-independent representation used within the Blurhash-core
         /// </summary>
         /// <param name="sourceBitmap">The bitmap to encode</param>
-        internal static Pixel[,] ConvertBitmap(Image<Rgb24> sourceBitmap)
+        public static Pixel[,] ConvertBitmap(Image<Rgb24> sourceBitmap)
         {            
             var width = sourceBitmap.Width;
             var height = sourceBitmap.Height;
@@ -42,8 +42,7 @@ namespace Blurhash.ImageSharp
             {
                 var rgbValues = MemoryMarshal.AsBytes(sourceBitmap.GetPixelRowSpan(y));
 
-                var index = stride;
-
+                int index = 0;
                 for (var x = 0; x < width; x++)
                 {
                     result[x, y].Red = MathUtils.SRgbToLinear(rgbValues[index]);
