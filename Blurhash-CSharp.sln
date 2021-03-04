@@ -32,7 +32,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blurhash.System.Drawing.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blurhash.System.Drawing.Common.Test", "Blurhash.System.Drawing.Common.Test\Blurhash.System.Drawing.Common.Test.csproj", "{F4BC2F18-00A1-42DD-B95B-39F671ECC9FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blurhash.ImageSharp.Tests", "Blurhash.ImageSharp.Tests\Blurhash.ImageSharp.Tests.csproj", "{2E398628-505C-4B5D-B42E-7800851E3FC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blurhash.ImageSharp.Tests", "Blurhash.ImageSharp.Tests\Blurhash.ImageSharp.Tests.csproj", "{2E398628-505C-4B5D-B42E-7800851E3FC5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{8B46D5FF-6BC8-4692-8F74-8D22EE02323B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blurhash.Benchmarks", "Blurhash.Benchmarks\Blurhash.Benchmarks.csproj", "{E9F33876-F2D1-4B8E-ACFC-4CF81DC1B861}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,6 +76,10 @@ Global
 		{2E398628-505C-4B5D-B42E-7800851E3FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E398628-505C-4B5D-B42E-7800851E3FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E398628-505C-4B5D-B42E-7800851E3FC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9F33876-F2D1-4B8E-ACFC-4CF81DC1B861}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9F33876-F2D1-4B8E-ACFC-4CF81DC1B861}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9F33876-F2D1-4B8E-ACFC-4CF81DC1B861}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9F33876-F2D1-4B8E-ACFC-4CF81DC1B861}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +93,7 @@ Global
 		{4924E9C0-4F56-421D-81CB-D1774A945053} = {1E9AAF8F-5723-4B38-BE3E-ADB0F0CB9188}
 		{F4BC2F18-00A1-42DD-B95B-39F671ECC9FD} = {1E9AAF8F-5723-4B38-BE3E-ADB0F0CB9188}
 		{2E398628-505C-4B5D-B42E-7800851E3FC5} = {836DA7C1-6ED5-46D8-91D7-C8C421769712}
+		{E9F33876-F2D1-4B8E-ACFC-4CF81DC1B861} = {8B46D5FF-6BC8-4692-8F74-8D22EE02323B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BAAE36B0-9BF1-46D3-BA1F-051172483AE0}
