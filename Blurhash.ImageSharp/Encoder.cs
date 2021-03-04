@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Mime;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Blurhash.Core;
@@ -35,16 +36,29 @@ namespace Blurhash.ImageSharp
         {
             var width = sourceBitmap.Width;
             var height = sourceBitmap.Height;
-            var bytesPerPixel = sourceBitmap.PixelType.BitsPerPixel / 8;
-            var stride = width * 3;
 
             var result = new PixelVector(width, height);
 
             for (int y = 0; y < height; y++)
             {
-                var rgbValues = MemoryMarshal.AsBytes(sourceBitmap.GetPixelRowSpan(y));
                 var pixelsY = result.Pixels[y];
-                for (var i = 0; i < width * 3; i++)
+                var pixelsYVector = result.VectorSpan(y);
+                var rgbSpan = sourceBitmap.GetPixelRowSpan(y);
+                var rgbValues = MemoryMarshal.AsBytes(rgbSpan);
+                var rgbVector = MemoryMarshal.Cast<Rgb24, Vector<byte>>(rgbSpan);
+                for (int i = 0; i < rgbVector.Length; i++)
+                {
+                    Vector.Widen(rgbVector[i], out var ushort0, out var ushort1);
+                    Vector.Widen(ushort0, out var uint0, out var uint1);
+                    Vector.Widen(ushort1, out var uint2, out var uint3);
+                    int pixelsYBase = i << 2;
+                    pixelsYVector[pixelsYBase] = Vector.ConvertToSingle(uint0);
+                    pixelsYVector[pixelsYBase + 1] = Vector.ConvertToSingle(uint1);
+                    pixelsYVector[pixelsYBase + 2] = Vector.ConvertToSingle(uint2);
+                    pixelsYVector[pixelsYBase + 3] = Vector.ConvertToSingle(uint3);
+                }
+
+                for (var i = rgbVector.Length * Vector<byte>.Count; i < width * 3; i++)
                 {
                     pixelsY[i] = rgbValues[i];
                 }

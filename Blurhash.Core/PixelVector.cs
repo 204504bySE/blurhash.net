@@ -38,7 +38,7 @@ namespace Blurhash.Core
         {
             Width = width;
             Height = height;
-            SpanLength = (width * 3 + Vector<float>.Count - 1) / Vector<float>.Count ;
+            SpanLength = (width * 3 + Vector<float>.Count - 1) / Vector<float>.Count;
             XCount = SpanLength * Vector<float>.Count;
 
             Pixels = new float[height][];

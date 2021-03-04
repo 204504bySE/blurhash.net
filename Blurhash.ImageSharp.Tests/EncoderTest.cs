@@ -19,7 +19,7 @@ namespace Blurhash.ImageSharp.Tests
 
             var encoded = encoder.Encode(image, 9, 9);
             //Result of float non-vector version
-            Assert.AreEqual(@"|cPixSOsi_n%XmgNWVj[bH1kWrW;ayaKaKjZaejZG^rXtQkCiwnij[j[jtQTxti^a|XSXSbHbHbHw^o}X8e:j[jZe.n%fQyDRjX9f8i{jFf7ayjZt7VtVsaykWbbbabbbGk=V[j?kVofkCjZoLayR6baozofaejbjZjFj[", encoded);
+            Assert.AreEqual(@"|cPixSOsi_n%XmkqWVj[bH1kWrW;ayaKaKjZaejZG^rXtQkCiwnioLj[jaQTxti^a|XSXSbHbHbHxDo}X8e:j[jZe.n%fQ%gRjX9f8i{jFf7ayjZt7VtVsaykWbbbbbbbGk=V[j?kVofkCjZoLayR6baozofaejbjZjFj[", encoded);
             Console.WriteLine();
         }
 
