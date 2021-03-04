@@ -11,7 +11,7 @@ namespace System.Drawing.Common.Blurhash
     /// </summary>
     public class Encoder : CoreEncoder
     {
-        public Encoder(int width, int height, int maxComponentsX, int maxComponentsY) : base(width, height, maxComponentsX, maxComponentsY) { }
+        public Encoder(int width, int height, int maxComponentsX, int maxComponentsY) : base(width, height, maxComponentsX, maxComponentsY, true) { }
 
         /// <summary>
         /// Encodes a picture into a Blurhash string
@@ -61,15 +61,15 @@ namespace System.Drawing.Common.Blurhash
 
             result = new PixelVector(width, height);
 
-                for (int y = 0; y < height; y++)
-                {
+            for (int y = 0; y < height; y++)
+            {
                 var baseIndex = 0 <= stride ? stride * y : -stride * (height - y);
-                    var pixelsY = result.Pixels[y];
-                    for (var i = 0; i < width * 3; i++)
-                    {
-                        pixelsY[i] = rgbValues[i + baseIndex];
-                    }
+                var pixelsY = result.Pixels[y];
+                for (var i = 0; i < width * 3; i++)
+                {
+                    pixelsY[i] = rgbValues[i + baseIndex];
                 }
+            }
             result.ChangeFromSrgbToLinear();
             return result;
         }

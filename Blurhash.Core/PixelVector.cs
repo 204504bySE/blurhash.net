@@ -76,7 +76,12 @@ namespace Blurhash.Core
             }
         }
 
-        public Pixel[,] AsPixels()
+        /// <summary>
+        /// For compatibility of test code
+        /// </summary>
+        /// <param name="isBgrByteOrder">BGR byte order e.g. GdiPlus.</param>
+        /// <returns></returns>
+        public Pixel[,] AsPixels(bool isBgrByteOrder)
         {
             var ret = new Pixel[Width, Height];
             for(int y = 0; y < Height; y++)
@@ -84,9 +89,18 @@ namespace Blurhash.Core
                 var pixelsY = Pixels[y];
                 for(int x = 0; x < Width; x++)
                 {
-                    ret[x, y].Blue = pixelsY[x * 3];
-                    ret[x, y].Green = pixelsY[x * 3 + 1];
-                    ret[x, y].Red = pixelsY[x * 3 + 2];
+                    if (isBgrByteOrder)
+                    {
+                        ret[x, y].Blue = pixelsY[x * 3];
+                        ret[x, y].Green = pixelsY[x * 3 + 1];
+                        ret[x, y].Red = pixelsY[x * 3 + 2];
+                    }
+                    else
+                    {
+                        ret[x, y].Red = pixelsY[x * 3];
+                        ret[x, y].Green = pixelsY[x * 3 + 1];
+                        ret[x, y].Blue = pixelsY[x * 3 + 2];
+                    }
                 }
             }
             return ret;

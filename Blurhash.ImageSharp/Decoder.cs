@@ -27,7 +27,7 @@ namespace Blurhash.ImageSharp
         /// </summary>
         /// <param name="pixelData">The library-independent representation of the image</param>
         /// <returns>A <c>Image&lt;Rgb24&gt;</c> in 24bpp-RGB representation</returns>
-        internal static Image<Rgb24> ConvertToBitmap(Pixel[,] pixelData)
+        public static Image<Rgb24> ConvertToBitmap(Pixel[,] pixelData)
         {
             var width = pixelData.GetLength(0);
             var height = pixelData.GetLength(1);

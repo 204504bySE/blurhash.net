@@ -22,7 +22,7 @@ namespace System.Drawing.Common.Blurhash
                 }
 
             var encoded = Encoder.ConvertBitmap(sourceImage);
-            var sourceData = encoded.AsPixels();
+            var sourceData = encoded.AsPixels(true);
 
             for (var x = 0; x < 20; x++)
             for (var y = 0; y < 20; y++)
@@ -57,7 +57,7 @@ namespace System.Drawing.Common.Blurhash
             }
 
             var encoded = Encoder.ConvertBitmap(sourceImage);
-            var sourceData = encoded.AsPixels();
+            var sourceData = encoded.AsPixels(true);
 
             for (var x = 0; x < 20; x++)
             for (var y = 0; y < 20; y++)

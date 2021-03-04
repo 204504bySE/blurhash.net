@@ -15,7 +15,7 @@ namespace Blurhash.Core
     {
         readonly int Width, Height;
         readonly int MaxComponentsX, MaxComponentsY;
-
+        readonly bool IsBgrOrder;
         /// <summary>
         // Basis X array.
         // [ComponentX][x*3+(r:0 g:1 b:2)]
@@ -28,7 +28,15 @@ namespace Blurhash.Core
         /// [ComponentY][y]
         /// </summary>
         readonly float[][] BasisY;
-        public CoreEncoder(int width, int height, int maxComponentsX, int maxComponentsY)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="maxComponentsX">1~9</param>
+        /// <param name="maxComponentsY">1~9</param>
+        /// <param name="isBgrByteOrder">BGR byte order e.g. GdiPlus.</param>
+        public CoreEncoder(int width, int height, int maxComponentsX, int maxComponentsY, bool isBgrOrder)
         {
             if (maxComponentsX < 1) throw new ArgumentException("maxComponentsX needs to be at least 1");
             if (maxComponentsX > 9) throw new ArgumentException("maxComponentsX needs to be at most 9");
@@ -39,6 +47,7 @@ namespace Blurhash.Core
             MaxComponentsY = maxComponentsY;
             Width = width;
             Height = height;
+            IsBgrOrder = isBgrOrder;
 
             //Calculate X|Y basis
             //Original Basis is...
@@ -170,19 +179,20 @@ namespace Blurhash.Core
                 }
             }
 
-            float b = 0, g = 0, r = 0;
+            float a = 0, b = 0, c = 0;
             float normalization = (xComponent == 0 && yComponent == 0) ? 1 : 2;
 
             //then sum horizontally
             for (int i = 0; i < width * 3; i += 3)
             {
-                b += sumArray[i];
-                g += sumArray[i + 1];
-                r += sumArray[i + 2];
+                a += sumArray[i];
+                b += sumArray[i + 1];
+                c += sumArray[i + 2];
             }
 
             var scale = normalization / (width * height);
-            return new Pixel(r * scale, g * scale, b * scale);
+            if (IsBgrOrder) { return new Pixel(c * scale, b * scale, a * scale); }
+            else {  return new Pixel(a * scale, b * scale, c * scale); }
         }
 
         private static int EncodeAc(float  r, float  g, float  b, float  maximumValue) {

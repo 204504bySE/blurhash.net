@@ -8,9 +8,9 @@ namespace System.Drawing.Blurhash
     /// <summary>
     /// The Blurhash encoder for use with the <code>System.Drawing.dll</code>
     /// </summary>
-    public class Encoder : CoreEncoder 
+    public class Encoder : CoreEncoder
     {
-        public Encoder(int width, int height, int maxComponentsX, int maxComponentsY) : base(width, height, maxComponentsX, maxComponentsY){ }
+        public Encoder(int width, int height, int maxComponentsX, int maxComponentsY) : base(width, height, maxComponentsX, maxComponentsY, true) { }
 
         /// <summary>
         /// Encodes a picture into a Blurhash string
