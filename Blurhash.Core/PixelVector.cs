@@ -54,8 +54,9 @@ namespace Blurhash.Core
             const float darkLinear = (float)(1.0 / 255 / 12.92);
             const float darkThresholdValue = (float)(0.04045 * 255);
             var darkThreshold = new Vector<float>(darkThresholdValue);
+            var gammaAdd = new Vector<float>(0.055f);
+
             Span<float> brightFloat = stackalloc float[Vector<float>.Count];
-            var bright = MemoryMarshal.Cast<float, Vector<float>>(brightFloat);
 
             for (int y = 0; y < Pixels.Length; y++)
             {
@@ -65,13 +66,13 @@ namespace Blurhash.Core
                     var veci = vec[i];
                     var darkSelect = Vector.LessThanOrEqual(veci, darkThreshold);
                     var dark = veci * darkLinear;
-                    bright[0] = veci * (1f / 255f);
+                    var bright = veci * (1f / 255f) + gammaAdd * (1 / 1.055f);
                     for (int j = 0; j < brightFloat.Length; j++)
                     {
-                        brightFloat[j] = MathF.Pow((brightFloat[j] + 0.055f) * (1 / 1.055f), 2.4f);
+                        brightFloat[j] = MathF.Pow(bright[j], 2.4f);
                     }
 
-                    vec[i] = Vector.ConditionalSelect(darkSelect ,dark, bright[0]);
+                    vec[i] = Vector.ConditionalSelect(darkSelect ,dark, new Vector<float>(brightFloat));
                 }
             }
         }
