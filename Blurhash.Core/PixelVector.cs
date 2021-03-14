@@ -11,39 +11,36 @@ namespace Blurhash.Core
         public int Width { get; }
         public int Height { get; }
         /// <summary>
-        /// 2nd index: X and RGB (BGR order because of little endian)
-        /// B: [(y * XCount + x) * 3 ]
-        /// G: [(y * XCount + x) * 3 + 1]
-        /// R: [(y * XCount + x) * 3 + 2]
+        /// [(y * XCount + x) * 3 + (0~2: RGB) ]
         /// and some extra elements to fit into Vector\<float\> 
         /// </summary>
         readonly float[] Pixels;
         /// <summary>
         /// Get a Vector Span of one line of Pixels
         /// </summary>
-        public Span<Vector<float>> RowSpanVector(int y) =>MemoryMarshal.Cast<float, Vector<float>>(Pixels.AsSpan(y * XCount, XCount));
+        public Span<Vector<float>> RowSpanVector(int y) =>MemoryMarshal.Cast<float, Vector<float>>(Pixels.AsSpan(y * RowSpanLength, RowSpanLength));
         /// <summary>
         /// Get a Span of one line of Pixels
         /// </summary>
-        public Span<float> RowSpan(int y) => Pixels.AsSpan(y * XCount, XCount);
+        public Span<float> RowSpan(int y) => Pixels.AsSpan(y * RowSpanLength, RowSpanLength);
         /// <summary>
         /// Length of RowSpan()
         /// </summary>
-        public int XCount { get; }
+        public int RowSpanLength { get; }
         /// <summary>
         /// Length of RowSpanVector()
         /// </summary>
-        public int SpanLength { get; }
+        public int RowSpanVectorLength { get; }
 
         public PixelVector(int width, int height)
         {
             Width = width;
             Height = height;
-            SpanLength = (width * 3 + Vector<float>.Count - 1) / Vector<float>.Count;
-            XCount = SpanLength * Vector<float>.Count;
+            RowSpanVectorLength = (width * 3 + Vector<float>.Count - 1) / Vector<float>.Count;
+            RowSpanLength = RowSpanVectorLength * Vector<float>.Count;
 
             //With some extra elements
-            Pixels = new float[Height * XCount];
+            Pixels = new float[Height * RowSpanLength];
         }
 
         /// <summary>
@@ -56,7 +53,7 @@ namespace Blurhash.Core
             var ret = new Pixel[Width, Height];
             for(int y = 0; y < Height; y++)
             {
-                var pixelsY = Pixels.AsSpan(y * XCount, XCount);
+                var pixelsY = Pixels.AsSpan(y * RowSpanLength, RowSpanLength);
                 for(int x = 0; x < Width; x++)
                 {
                     if (isBgrByteOrder)

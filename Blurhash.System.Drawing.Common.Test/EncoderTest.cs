@@ -20,18 +20,5 @@ namespace System.Drawing.Common.Blurhash
             Assert.AreEqual(@"|cPixSOsi_n%XmgNWVj[bH1kWrW;ayaKaKjZaejZG^rXtQkCiwnij[j[jtQTxti^a|XSXSbHbHbHw^o}X8e:j[jZe.n%fQyDRjX9f8i{jFf7ayjZt7VtVsaykWbbbabbbGk=V[j?kVofkCjZoLayR6baozofaejbjZjFj[", encoded);
             Console.WriteLine();
         }
-
-        public void EncodeBenchmark()
-        {
-            var image = Image.FromFile("1233360707896238080.jpg");
-            var encoder = new Encoder();
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < 1000; i++)
-            {
-                encoder.Encode(image, 9, 9);
-            }
-            Console.WriteLine(sw.ElapsedMilliseconds);
-        }
     }
 }

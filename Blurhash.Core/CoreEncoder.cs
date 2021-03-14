@@ -100,7 +100,7 @@ namespace Blurhash.Core
             var componentBasisX = BasisProvider.BasisX(pixels.Width, xComponent);
             var componentBasisY = BasisProvider.BasisY(pixels.Height, yComponent);
 
-            Span<Vector<float>> sumVec =  stackalloc Vector<float>[pixels.SpanLength];
+            Span<Vector<float>> sumVec =  stackalloc Vector<float>[pixels.RowSpanVectorLength];
             sumVec.Fill(Vector<float>.Zero);
             var sumArray = MemoryMarshal.Cast<Vector<float>, float>(sumVec);
 
