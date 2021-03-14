@@ -32,7 +32,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blurhash.System.Drawing.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blurhash.System.Drawing.Common.Test", "Blurhash.System.Drawing.Common.Test\Blurhash.System.Drawing.Common.Test.csproj", "{F4BC2F18-00A1-42DD-B95B-39F671ECC9FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blurhash.ImageSharp.Tests", "Blurhash.ImageSharp.Tests\Blurhash.ImageSharp.Tests.csproj", "{2E398628-505C-4B5D-B42E-7800851E3FC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blurhash.ImageSharp.Tests", "Blurhash.ImageSharp.Tests\Blurhash.ImageSharp.Tests.csproj", "{2E398628-505C-4B5D-B42E-7800851E3FC5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blurhash.Benchmarks", "Blurhash.Benchmarks\Blurhash.Benchmarks.csproj", "{0F2A59DD-E8A0-43F6-A554-C9D87BEE9C65}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,6 +74,10 @@ Global
 		{2E398628-505C-4B5D-B42E-7800851E3FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E398628-505C-4B5D-B42E-7800851E3FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E398628-505C-4B5D-B42E-7800851E3FC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F2A59DD-E8A0-43F6-A554-C9D87BEE9C65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F2A59DD-E8A0-43F6-A554-C9D87BEE9C65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F2A59DD-E8A0-43F6-A554-C9D87BEE9C65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F2A59DD-E8A0-43F6-A554-C9D87BEE9C65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
