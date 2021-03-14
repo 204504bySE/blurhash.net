@@ -1,5 +1,6 @@
 # blurhash.net Performance Fork
-This is a performance fork of [blurhash.net](https://github.com/MarkusPalcer/blurhash.net)
+This is a performance fork of [blurhash.net](https://github.com/MarkusPalcer/blurhash.net).
+
 Only the encoder has been tuned. The decoder is still untouched. (I'll tune it later...)
 
 ## Performance
@@ -17,7 +18,7 @@ See [Benchmarks](https://github.com/204504bySE/blurhash.net/wiki/Benchmarks).
 I have a website [TwiGaTen](https://twigaten.204504byse.info/). ([source code](https://github.com/204504bySE/twigaten))
 It crawls Twitter to collect tweets with image and image itself. It only collects ":thumb"(150x150px) images but the number is about 3~4 million/day. And I use 9x9 blurhash to make them as clear as possible.
 
-However, original [blurhash.net](https://github.com/MarkusPalcer/blurhash.net) was too heavy for my usage. It doubled the CPU load of my server... 
+However, original [blurhash.net](https://github.com/MarkusPalcer/blurhash.net) was heavy for my usage. It doubled the CPU load of my server... 
 
 ## Projects in this solution
 This list does not contain the projects with names ending in `.Test` as they are the test projects for the ones listed here.
