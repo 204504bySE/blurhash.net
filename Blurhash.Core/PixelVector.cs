@@ -46,6 +46,7 @@ namespace Blurhash.Core
             Pixels = new float[Height * XCount];
         }
 
+        //This is slower than MathUtils.SRgbToLinear lol
         public void ChangeFromSrgbToLinear()
         {
             const float darkLinear = (float)(1.0 / 255 / 12.92);

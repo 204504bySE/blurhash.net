@@ -42,9 +42,18 @@ namespace Blurhash.ImageSharp
             for (int y = 0; y < height; y++)
             {
                 var pixelsY = result.RowSpan(y);
-                var pixelsYVector = result.RowSpanVector(y);
                 var rgbSpan = sourceBitmap.GetPixelRowSpan(y);
                 var rgbValues = MemoryMarshal.AsBytes(rgbSpan);
+                
+                for(int i = 0; i < rgbValues.Length; i++)
+                {
+                    pixelsY[i] = MathUtils.SRgbToLinear(rgbValues[i]);
+                }
+
+                /*
+                // for ChangeFromSrgbToLinear()
+                // this is slower lol
+                var pixelsYVector = result.RowSpanVector(y);
                 var rgbVector = MemoryMarshal.Cast<Rgb24, Vector<byte>>(rgbSpan);
                 for (int i = 0; i < rgbVector.Length; i++)
                 {
@@ -62,8 +71,9 @@ namespace Blurhash.ImageSharp
                 {
                     pixelsY[i] = rgbValues[i];
                 }
+                */
             }
-            result.ChangeFromSrgbToLinear();
+            //result.ChangeFromSrgbToLinear();
             return result;
         }
     }
