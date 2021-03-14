@@ -37,10 +37,17 @@ namespace Blurhash.Benchmarks
 
     public class ImageSharpBenchmarks
     {
-        [Benchmark]
+        //[Benchmark]
         public void LoadImageBenchmark()
         {
             var image = Image.Load<Rgb24>("1233360707896238080.jpg");
+        }
+
+        //[Benchmark]
+        public void ConvertBitmapBenchmark()
+        {
+            var image = Image.Load<Rgb24>("1233360707896238080.jpg");
+            Encoder.ConvertBitmap(image);
         }
 
         [Benchmark]
