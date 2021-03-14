@@ -15,7 +15,7 @@ namespace Blurhash.ImageSharp.Tests
         public async Task EncodeTest()
         {
             var image = await Image.LoadAsync<Rgb24>("1233360707896238080.jpg");
-            var encoder = new Encoder(150,150, 9,9);
+            var encoder = new Encoder();
 
             var encoded = encoder.Encode(image, 9, 9);
             //Result of float non-vector version
@@ -23,11 +23,10 @@ namespace Blurhash.ImageSharp.Tests
             Console.WriteLine();
         }
 
-        [TestMethod]
         public async Task EncodeBenchmark()
         {
             var image = await Image.LoadAsync<Rgb24>("1233360707896238080.jpg");
-            var encoder = new Encoder(150, 150, 9, 9);
+            var encoder = new Encoder();
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
             for (int i = 0; i < 1000; i++)

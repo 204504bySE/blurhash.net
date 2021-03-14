@@ -13,76 +13,18 @@ namespace Blurhash.Core
     /// </summary>
     public class CoreEncoder
     {
-        readonly int Width, Height;
-        readonly int MaxComponentsX, MaxComponentsY;
+        readonly IBasisProvider BasisProvider;
         readonly bool IsBgrOrder;
+
+        public CoreEncoder(bool isBgrOrder): this(new BasisProvider(), isBgrOrder) { }
         /// <summary>
-        // Basis X array.
-        // [ComponentX][x*3+(r:0 g:1 b:2)]
-        // for RGB packed array.
-        // and has some extra elements to fit into Vector\<float\>
         /// </summary>
-        readonly Vector<float>[][] BasisX;
-        /// <summary>
-        /// Basis Y array.
-        /// [ComponentY][y]
-        /// </summary>
-        readonly float[][] BasisY;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="maxComponentsX">1~9</param>
-        /// <param name="maxComponentsY">1~9</param>
+        /// <param name="basisProvider"></param>
         /// <param name="isBgrByteOrder">BGR byte order e.g. GdiPlus.</param>
-        public CoreEncoder(int width, int height, int maxComponentsX, int maxComponentsY, bool isBgrOrder)
+        public CoreEncoder(IBasisProvider basisProvider, bool isBgrOrder)
         {
-            if (maxComponentsX < 1) throw new ArgumentException("maxComponentsX needs to be at least 1");
-            if (maxComponentsX > 9) throw new ArgumentException("maxComponentsX needs to be at most 9");
-            if (maxComponentsY < 1) throw new ArgumentException("maxComponentsY needs to be at least 1");
-            if (maxComponentsY > 9) throw new ArgumentException("maxComponentsY needs to be at most 9");
-
-            MaxComponentsX = maxComponentsX;
-            MaxComponentsY = maxComponentsY;
-            Width = width;
-            Height = height;
+            BasisProvider = basisProvider;
             IsBgrOrder = isBgrOrder;
-
-            //Calculate X|Y basis
-            //Original Basis is...
-            //MathF.Cos(MathF.PI * xComponent * x / width) * MathF.Cos(MathF.PI * yComponent * y / height)
-
-            BasisX = new Vector<float>[maxComponentsX][];
-            int basisXVectorLength = (width * 3 + Vector<float>.Count - 1) / Vector<float>.Count;
-            for (int c = 0; c < maxComponentsX; c++)
-            {   var basisArray = new float[basisXVectorLength * Vector<float>.Count];
-                for (int x = 0; x < width; x++)
-                {
-                    float basis = MathF.Cos(MathF.PI * c * x / Width);
-                    basisArray[3 * x] = basis;
-                    basisArray[3 * x + 1] = basis;
-                    basisArray[3 * x + 2] = basis;
-                }
-
-                var basisVector = new Vector<float>[basisXVectorLength];
-                BasisX[c] = basisVector;
-                for(int i = 0; i < basisVector.Length; i++)
-                {
-                    basisVector[i] = new Vector<float>(basisArray, i * Vector<float>.Count);
-                }
-            }
-
-            BasisY = new float[maxComponentsY][];
-            for (int c = 0; c < maxComponentsY; c++)
-            {
-                var basisArray = new float[height];
-                BasisY[c] = basisArray;
-                for (int y = 0; y < basisArray.Length; y++)
-                {
-                    basisArray[y] = MathF.Cos(MathF.PI * c * y / height);
-                }
-            }
         }
 
         /// <summary>
@@ -93,9 +35,6 @@ namespace Blurhash.Core
         {
             if (componentsX < 1) throw new ArgumentException("componentsX needs to be at least 1");
             if (componentsY < 1) throw new ArgumentException("componentsY needs to be at least 1");
-            if (componentsX > MaxComponentsX) throw new ArgumentException("componentsX needs to be not more than MaxComponentsX");
-            if (componentsY > MaxComponentsY) throw new ArgumentException("componentsY needs to be not more than MaxComponentsY");
-            if (Width != pixels.Width || Height != pixels.Height) { throw new ArgumentException("Width/Height mismatch"); }
 
             var factors = new Pixel[componentsX, componentsY];
 
@@ -158,8 +97,8 @@ namespace Blurhash.Core
 
         private Pixel MultiplyBasisFunction(int xComponent, int yComponent, PixelVector pixels)
         {
-            var componentBasisX = BasisX[xComponent];
-            var componentBasisY = BasisY[yComponent];
+            var componentBasisX = BasisProvider.BasisX(pixels.Width, xComponent);
+            var componentBasisY = BasisProvider.BasisY(pixels.Height, yComponent);
 
             Span<Vector<float>> sumVec =  stackalloc Vector<float>[pixels.SpanLength];
             sumVec.Fill(Vector<float>.Zero);

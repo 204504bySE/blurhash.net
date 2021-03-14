@@ -13,7 +13,7 @@ namespace System.Drawing.Common.Blurhash
         public void EncodeTest()
         {
             var image = Image.FromFile("1233360707896238080.jpg");
-            var encoder = new Encoder(150,150, 9,9);
+            var encoder = new Encoder();
 
             var encoded = encoder.Encode(image, 9, 9);
             //Result of float non-vector version
@@ -21,11 +21,10 @@ namespace System.Drawing.Common.Blurhash
             Console.WriteLine();
         }
 
-        [TestMethod]
         public void EncodeBenchmark()
         {
             var image = Image.FromFile("1233360707896238080.jpg");
-            var encoder = new Encoder(150, 150, 9, 9);
+            var encoder = new Encoder();
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
             for (int i = 0; i < 1000; i++)
