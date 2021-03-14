@@ -21,17 +21,17 @@ namespace Blurhash.Core
         /// <summary>
         /// Get a Vector Span of one line of Pixels
         /// </summary>
-        public Span<Vector<float>> LineSpanVector(int y) =>MemoryMarshal.Cast<float, Vector<float>>(Pixels.AsSpan(y * XCount, XCount));
+        public Span<Vector<float>> RowSpanVector(int y) =>MemoryMarshal.Cast<float, Vector<float>>(Pixels.AsSpan(y * XCount, XCount));
         /// <summary>
         /// Get a Span of one line of Pixels
         /// </summary>
-        public Span<float> LineSpan(int y) => Pixels.AsSpan(y * XCount, XCount);
+        public Span<float> RowSpan(int y) => Pixels.AsSpan(y * XCount, XCount);
         /// <summary>
-        /// Length of one line of Pixels
+        /// Length of RowSpan()
         /// </summary>
         public int XCount { get; }
         /// <summary>
-        /// Length of LineSpanVector()
+        /// Length of RowSpanVector()
         /// </summary>
         public int SpanLength { get; }
 
