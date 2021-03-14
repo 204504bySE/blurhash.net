@@ -21,9 +21,9 @@ namespace Blurhash.Core
         /// Converts an sRGB input value (0 to 255) into a linear double value
         /// </summary>
         public static float SRgbToLinear(int value) {
-            float v = value / 255f;
-            if(v <= 0.04045f) return v / 12.92f;
-            else return MathF.Pow((v + 0.055f) / 1.055f, 2.4f);
+            float v = value * (1f / 255f);
+            if(v <= 0.04045f) return v * (1f / 12.92f);
+            else return MathF.Pow((v + 0.055f) *  (1f / 1.055f), 2.4f);
         }
 
         /// <summary>
