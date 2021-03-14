@@ -11,6 +11,11 @@ namespace Blurhash.Core
     /// </summary>
     public class CoreEncoder
     {
+        public CoreEncoder()
+        {
+            basisProvider = new BasisProviderEncode();
+        }
+
         /// <summary>
         /// A callback to be called when the progress of the operation changes.
         /// It receives a value between 0.0 and 1.0 that indicates the progress.
@@ -105,7 +110,9 @@ namespace Blurhash.Core
             return resultBuilder.ToString();
         }
 
-        private static Pixel MultiplyBasisFunction(int xComponent, int yComponent, Pixel[,] pixels)
+        readonly IBasisProviderEncode basisProvider;
+
+        private Pixel MultiplyBasisFunction(int xComponent, int yComponent, Pixel[,] pixels)
         {
             double r = 0, g = 0, b = 0;
             double normalization = (xComponent == 0 && yComponent == 0) ? 1 : 2;
@@ -113,10 +120,13 @@ namespace Blurhash.Core
             var width = pixels.GetLength(0);
             var height = pixels.GetLength(1);
 
+            var basisX = basisProvider.BasisX(width, xComponent);
+            var basisY = basisProvider.BasisY(height, yComponent);
+
             for(var y = 0; y < height; y++)
             {
                 for(var x = 0; x < width; x++) {
-                    var basis = Math.Cos(Math.PI * xComponent * x / width) * Math.Cos(Math.PI * yComponent * y / height);
+                    var basis = basisX[x] * basisY[y];
                     r += basis * pixels[x,y].Red;
                     g += basis * pixels[x,y].Green;
                     b += basis * pixels[x,y].Blue;
