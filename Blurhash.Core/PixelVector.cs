@@ -11,26 +11,27 @@ namespace Blurhash.Core
         public int Width { get; }
         public int Height { get; }
         /// <summary>
-        /// 1st index: Y
         /// 2nd index: X and RGB (BGR order because of little endian)
-        /// B: [3 * x]
-        /// G: [3 * x + 1]
-        /// R: [3 * x + 2]
+        /// B: [(y * XCount + x) * 3 ]
+        /// G: [(y * XCount + x) * 3 + 1]
+        /// R: [(y * XCount + x) * 3 + 2]
         /// and some extra elements to fit into Vector\<float\> 
         /// </summary>
-        public readonly float[][] Pixels;
+        readonly float[] Pixels;
         /// <summary>
-        /// Get a Span of 2nd level(one line) of Pixels
+        /// Get a Vector Span of one line of Pixels
         /// </summary>
-        /// <param name="y">1st index of Pixels</param>
-        /// <returns></returns>
-        public Span<Vector<float>> VectorSpan(int y) =>MemoryMarshal.Cast<float, Vector<float>>(Pixels[y].AsSpan());
+        public Span<Vector<float>> LineSpanVector(int y) =>MemoryMarshal.Cast<float, Vector<float>>(Pixels.AsSpan(y * XCount, XCount));
         /// <summary>
-        /// Length of the 2nd level of Pixels
+        /// Get a Span of one line of Pixels
+        /// </summary>
+        public Span<float> LineSpan(int y) => Pixels.AsSpan(y * XCount, XCount);
+        /// <summary>
+        /// Length of one line of Pixels
         /// </summary>
         public int XCount { get; }
         /// <summary>
-        /// Length of VectorSpan()
+        /// Length of LineSpanVector()
         /// </summary>
         public int SpanLength { get; }
 
@@ -41,12 +42,8 @@ namespace Blurhash.Core
             SpanLength = (width * 3 + Vector<float>.Count - 1) / Vector<float>.Count;
             XCount = SpanLength * Vector<float>.Count;
 
-            Pixels = new float[height][];
-            for(int y = 0; y < Pixels.Length; y++)
-            {
-                //With some extra elements
-                Pixels[y] = new float[XCount];
-            }
+            //With some extra elements
+            Pixels = new float[Height * XCount];
         }
 
         public void ChangeFromSrgbToLinear()
@@ -58,22 +55,19 @@ namespace Blurhash.Core
 
             Span<float> brightFloat = stackalloc float[Vector<float>.Count];
 
-            for (int y = 0; y < Pixels.Length; y++)
+            var vec = MemoryMarshal.Cast<float, Vector<float>>(Pixels.AsSpan());
+            for (int i = 0; i < vec.Length; i++)
             {
-                var vec = VectorSpan(y);
-                for (int i = 0; i < vec.Length; i++)
+                var veci = vec[i];
+                var darkSelect = Vector.LessThanOrEqual(veci, darkThreshold);
+                var dark = veci * darkLinear;
+                var bright = (veci * (1f / 255f) + gammaAdd) * (1 / 1.055f);
+                for (int j = 0; j < brightFloat.Length; j++)
                 {
-                    var veci = vec[i];
-                    var darkSelect = Vector.LessThanOrEqual(veci, darkThreshold);
-                    var dark = veci * darkLinear;
-                    var bright = (veci * (1f / 255f) + gammaAdd) * (1 / 1.055f);
-                    for (int j = 0; j < brightFloat.Length; j++)
-                    {
-                        brightFloat[j] = MathF.Pow(bright[j], 2.4f);
-                    }
-
-                    vec[i] = Vector.ConditionalSelect(darkSelect ,dark, new Vector<float>(brightFloat));
+                    brightFloat[j] = MathF.Pow(bright[j], 2.4f);
                 }
+
+                vec[i] = Vector.ConditionalSelect(darkSelect ,dark, new Vector<float>(brightFloat));
             }
         }
 
@@ -87,7 +81,7 @@ namespace Blurhash.Core
             var ret = new Pixel[Width, Height];
             for(int y = 0; y < Height; y++)
             {
-                var pixelsY = Pixels[y];
+                var pixelsY = Pixels.AsSpan(y * XCount, XCount);
                 for(int x = 0; x < Width; x++)
                 {
                     if (isBgrByteOrder)

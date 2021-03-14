@@ -111,7 +111,7 @@ namespace Blurhash.Core
             for (var y = 0; y < height; y++)
             {
                 var currentBasisY = componentBasisY[y];
-                var vec = pixels.VectorSpan(y);
+                var vec = pixels.LineSpanVector(y);
                 for(int x = 0; x < vec.Length; x++)
                 {
                     sumVec[x] += vec[x] * componentBasisX[x] * currentBasisY;

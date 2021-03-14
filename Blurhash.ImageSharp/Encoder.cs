@@ -41,8 +41,8 @@ namespace Blurhash.ImageSharp
 
             for (int y = 0; y < height; y++)
             {
-                var pixelsY = result.Pixels[y];
-                var pixelsYVector = result.VectorSpan(y);
+                var pixelsY = result.LineSpan(y);
+                var pixelsYVector = result.LineSpanVector(y);
                 var rgbSpan = sourceBitmap.GetPixelRowSpan(y);
                 var rgbValues = MemoryMarshal.AsBytes(rgbSpan);
                 var rgbVector = MemoryMarshal.Cast<Rgb24, Vector<byte>>(rgbSpan);
