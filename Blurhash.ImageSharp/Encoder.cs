@@ -41,7 +41,7 @@ namespace Blurhash.ImageSharp
         /// Converts the given bitmap to the library-independent representation used within the Blurhash-core
         /// </summary>
         /// <param name="sourceBitmap">The bitmap to encode</param>
-        internal static Pixel[,] ConvertBitmap<T>(Image<T> sourceBitmap) where T : struct, IPixel<T>
+        public static Pixel[,] ConvertBitmap<T>(Image<T> sourceBitmap) where T : struct, IPixel<T>
         {
             if (typeof(T) != typeof(Rgba32) && typeof(T) != typeof(Rgb24))
                 throw new ArgumentOutOfRangeException(nameof(sourceBitmap), "Only Rgba32 and Rgb24 are supported");
