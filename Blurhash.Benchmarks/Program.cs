@@ -16,10 +16,6 @@ namespace Blurhash.Benchmarks
     {
         static void Main(string[] args)
         {
-            var benchmark = new ImageSharpBenchmarks();
-            for(int i= 0; i< 1000; i++) { benchmark.EncodeBenchmark(); }
-            return;
-
             //https://github.com/dotnet/BenchmarkDotNet/issues/856
             var x86net5 = Job.ShortRun
                 .WithPlatform(BenchmarkDotNet.Environments.Platform.X86)
