@@ -66,7 +66,7 @@ namespace Blurhash.Core
                     var veci = vec[i];
                     var darkSelect = Vector.LessThanOrEqual(veci, darkThreshold);
                     var dark = veci * darkLinear;
-                    var bright = veci * (1f / 255f) + gammaAdd * (1 / 1.055f);
+                    var bright = (veci * (1f / 255f) + gammaAdd) * (1 / 1.055f);
                     for (int j = 0; j < brightFloat.Length; j++)
                     {
                         brightFloat[j] = MathF.Pow(bright[j], 2.4f);
