@@ -64,13 +64,12 @@ namespace System.Drawing.Blurhash
             for (int y = 0; y < height; y++)
             {
                 var baseIndex = 0 <= stride ? stride * y : -stride * (height - y);
-                var pixelsY = result.Pixels[y];
+                var pixelsY = result.RowSpan(y);
                 for (var i = 0; i < width * 3; i++)
                 {
-                    pixelsY[i] = rgbValues[i + baseIndex];
+                    pixelsY[i] = MathUtils.SRgbToLinear(rgbValues[i + baseIndex]);
                 }
             }
-            result.ChangeFromSrgbToLinear();
             return result;
         }
     }
