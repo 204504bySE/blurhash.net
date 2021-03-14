@@ -1,4 +1,4 @@
-# blurhash.net fork
+# blurhash.net Performance Fork
 This is a performance fork of [blurhash.net](https://github.com/MarkusPalcer/blurhash.net)
 Only the encoder has been tuned. The decoder is still untouched. (I'll tune it later...)
 
@@ -8,12 +8,9 @@ See [Benchmarks](https://github.com/204504bySE/blurhash.net/wiki/Benchmarks).
 
 ## Branches
 
-* vector
-   The fastest version. Not compatible with the original version.
-* basisprovider
-   Just reduced calling Math.Cos().
-* master
-   The original version.
+* vector: The fastest version. Not compatible with the original version.
+* basisprovider: Just reduced calling Math.Cos().
+* master: The original version.
 
 
 ## Motivation
