@@ -22,18 +22,5 @@ namespace Blurhash.ImageSharp.Tests
             Assert.AreEqual(@"|cPixSOsi_n%XmkqWVj[bH1kWrW;ayaKaKjZaejZG^rXtQkCiwnioLj[jaQTxti^a|XSXSbHbHbHxDo}X8e:j[jZe.n%fQ%gRjX9f8i{jFf7ayjZt7VtVsaykWbbbbbbbGk=V[j?kVofkCjZoLayR6baozofaejbjZjFj[", encoded);
             Console.WriteLine();
         }
-
-        public async Task EncodeBenchmark()
-        {
-            var image = await Image.LoadAsync<Rgb24>("1233360707896238080.jpg");
-            var encoder = new Encoder();
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < 1000; i++)
-            {
-                encoder.Encode(image, 9, 9);
-            }
-            Console.WriteLine(sw.ElapsedMilliseconds);
-        }
     }
 }

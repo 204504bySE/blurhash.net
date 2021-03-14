@@ -49,31 +49,7 @@ namespace Blurhash.ImageSharp
                 {
                     pixelsY[i] = MathUtils.SRgbToLinear(rgbValues[i]);
                 }
-
-                /*
-                // for ChangeFromSrgbToLinear()
-                // this is slower lol
-                var pixelsYVector = result.RowSpanVector(y);
-                var rgbVector = MemoryMarshal.Cast<Rgb24, Vector<byte>>(rgbSpan);
-                for (int i = 0; i < rgbVector.Length; i++)
-                {
-                    Vector.Widen(rgbVector[i], out var ushort0, out var ushort1);
-                    Vector.Widen(ushort0, out var uint0, out var uint1);
-                    Vector.Widen(ushort1, out var uint2, out var uint3);
-                    int pixelsYBase = i << 2;
-                    pixelsYVector[pixelsYBase] = Vector.ConvertToSingle(uint0);
-                    pixelsYVector[pixelsYBase + 1] = Vector.ConvertToSingle(uint1);
-                    pixelsYVector[pixelsYBase + 2] = Vector.ConvertToSingle(uint2);
-                    pixelsYVector[pixelsYBase + 3] = Vector.ConvertToSingle(uint3);
-                }
-
-                for (var i = rgbVector.Length * Vector<byte>.Count; i < width * 3; i++)
-                {
-                    pixelsY[i] = rgbValues[i];
-                }
-                */
             }
-            //result.ChangeFromSrgbToLinear();
             return result;
         }
     }
