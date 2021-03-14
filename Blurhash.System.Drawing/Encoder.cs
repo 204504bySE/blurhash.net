@@ -11,7 +11,7 @@ namespace System.Drawing.Blurhash
     public class Encoder : CoreEncoder
     {
         public Encoder() : base(true) { }
-        public Encoder(IBasisProvider basisProvider) : base(basisProvider, true) { }
+        public Encoder(IBasisProviderEncode basisProvider) : base(basisProvider, true) { }
 
         /// <summary>
         /// Encodes a picture into a Blurhash string

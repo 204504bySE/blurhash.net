@@ -13,15 +13,15 @@ namespace Blurhash.Core
     /// </summary>
     public class CoreEncoder
     {
-        readonly IBasisProvider BasisProvider;
+        readonly IBasisProviderEncode BasisProvider;
         readonly bool IsBgrOrder;
 
-        public CoreEncoder(bool isBgrOrder): this(new BasisProvider(), isBgrOrder) { }
+        public CoreEncoder(bool isBgrOrder): this(new BasisProviderEncode(), isBgrOrder) { }
         /// <summary>
         /// </summary>
         /// <param name="basisProvider"></param>
         /// <param name="isBgrByteOrder">BGR byte order e.g. GdiPlus.</param>
-        public CoreEncoder(IBasisProvider basisProvider, bool isBgrOrder)
+        public CoreEncoder(IBasisProviderEncode basisProvider, bool isBgrOrder)
         {
             BasisProvider = basisProvider;
             IsBgrOrder = isBgrOrder;

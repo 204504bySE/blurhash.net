@@ -6,11 +6,11 @@ using System.Text;
 namespace Blurhash.Core
 {
     /// <summary>
-    /// Calculate X|Y basis
+    /// Calculate X|Y basis for CoreEncoder
     /// Original Basis is...
     /// Math.Cos(Math.PI * xComponent * x / width) * Math.Cos(Math.PI * yComponent * y / height)
     /// </summary>
-    public interface IBasisProvider
+    public interface IBasisProviderEncode
     {
         /// <summary>
         // Basis X array.
@@ -27,9 +27,9 @@ namespace Blurhash.Core
     }    
 
     /// <summary>
-    /// The naive IBasisProvider implementation
+    /// The naive IBasisProviderEncode implementation
     /// </summary>
-    public class BasisProvider : IBasisProvider
+    public class BasisProviderEncode : IBasisProviderEncode
     {
         public Vector<float>[] BasisX(int width, int componentX)
         {

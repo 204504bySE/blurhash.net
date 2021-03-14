@@ -13,7 +13,7 @@ namespace Blurhash.ImageSharp
     public class Encoder : CoreEncoder
     {
         public Encoder() : base(false) { }
-        public Encoder(IBasisProvider basisProvider) : base(basisProvider, false) { }
+        public Encoder(IBasisProviderEncode basisProvider) : base(basisProvider, false) { }
 
         /// <summary>
         /// Encodes a picture into a Blurhash string
