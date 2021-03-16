@@ -57,7 +57,7 @@ namespace Blurhash.Core
             if(acCount > 0)
             {
                 // Get maximum absolute value of all AC components
-                var actualMaximumValue = 0.0;
+                float actualMaximumValue = 0f;
                 for (var y = 0; y < componentsY; y++)
                 {
                     for (var x = 0; x < componentsX; x++)
@@ -71,8 +71,8 @@ namespace Blurhash.Core
                     }
                 }
 
-                var quantizedMaximumValue = (int) Math.Max(0.0, Math.Min(82.0, Math.Floor(actualMaximumValue * 166 - 0.5)));
-                maximumValue = ((float)quantizedMaximumValue + 1) / 166;
+                var quantizedMaximumValue = Math.Clamp((int)MathF.Floor(actualMaximumValue * 166f - 0.5f), 0, 82);
+                maximumValue = (quantizedMaximumValue + 1) * (1f / 166f);
                 resultBuilder.Append(quantizedMaximumValue.EncodeBase83(1));
             } else {
                 maximumValue = 1;
@@ -135,9 +135,9 @@ namespace Blurhash.Core
         }
 
         private static int EncodeAc(float  r, float  g, float  b, float  maximumValue) {
-            var quantizedR = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(r / maximumValue, 0.5f) * 9 + 9.5f)));
-            var quantizedG = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(g / maximumValue, 0.5f) * 9 + 9.5f)));
-            var quanzizedB = (int) Math.Max(0, Math.Min(18, Math.Floor(MathUtils.SignPow(b / maximumValue, 0.5f) * 9 + 9.5f)));
+            var quantizedR = Math.Clamp((int)MathF.Floor(MathUtils.SignPow(r / maximumValue, 0.5f) * 9 + 9.5f),0, 18);
+            var quantizedG = Math.Clamp((int)MathF.Floor(MathUtils.SignPow(g / maximumValue, 0.5f) * 9 + 9.5f),0, 18);
+            var quanzizedB = Math.Clamp((int)MathF.Floor(MathUtils.SignPow(b / maximumValue, 0.5f) * 9 + 9.5f),0, 18);
 
             return quantizedR * (19 * 19) + quantizedG * 19 + quanzizedB;
         }
